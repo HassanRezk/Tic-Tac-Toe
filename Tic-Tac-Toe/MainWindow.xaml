@@ -1,0 +1,8 @@
+﻿<Window x:Class="Tic_Tac_Toe.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="500" Width="500">
+    <Grid>
+        <WrapPanel x:Name="wp" HorizontalAlignment="Left" Height="300" Margin="182,160,0,0" VerticalAlignment="Top" Width="300"/>
+    </Grid>
+</Window>
