@@ -55,8 +55,11 @@ namespace Tic_Tac_Toe
                 }
         }
 
+        bool play = true;
+
         public void IsClicked(Object sender, EventArgs e)
         {
+            if (!play) return;
             Button b = (Button)sender;
             int i = int.Parse(b.Name[1] + "");
             int j = int.Parse(b.Name[2] + "");
@@ -71,17 +74,37 @@ namespace Tic_Tac_Toe
                     for (int l = 0; l < N; ++l)
                         grid2[k][l] = grid[k][l];
                 }
-                MessageBox.Show("After click\n" + PrintGrid());
-                MyPair v = GetNextMove(true);
-                for (int k = 0; k < N; ++k)
+                //MessageBox.Show("After click\n" + PrintGrid());
+                int w = Check();
+                if (w == -2)
                 {
-                    grid[k] = new char[N];
-                    for (int l = 0; l < N; ++l)
-                        grid[k][l] = grid2[k][l];
+                    MyPair v = GetNextMove(true);
+                    for (int k = 0; k < N; ++k)
+                    {
+                        grid[k] = new char[N];
+                        for (int l = 0; l < N; ++l)
+                            grid[k][l] = grid2[k][l];
+                    }
+                    grid[v.i][v.j] = GetC(true);
+                    //MessageBox.Show(v + "\n" + PrintGrid());
+                    t[v.i][v.j].Content = Convert.ToString(GetC(true));
+                    w = Check();
+                    if (w == 1)
+                    {
+                        MessageBox.Show("You Lose");
+                        play = false;
+                    }
+                    else if (w == -1)
+                    {
+                        MessageBox.Show("You Win");
+                        play = false;
+                    }
                 }
-                grid[v.i][v.j] = GetC(true);
-                MessageBox.Show(v + "\n" + PrintGrid());
-                t[v.i][v.j].Content = Convert.ToString(GetC(true));
+                else if (Check() == 0)
+                {
+                    MessageBox.Show("Draw");
+                    play = false;
+                }
             }
 
         }
@@ -199,6 +222,17 @@ namespace Tic_Tac_Toe
                 for (int j = 0; j < N; ++j)
                     ret += grid[i][j];
             return ret;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            for(int i = 0 ; i < N ; ++i)
+                for (int j = 0; j < N; ++j)
+                {
+                    grid[i][j] = '-';
+                    t[i][j].Content = "";
+                }
+            play = true;
         }
 
     }

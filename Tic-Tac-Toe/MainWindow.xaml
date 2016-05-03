@@ -4,5 +4,15 @@
         Title="MainWindow" Height="500" Width="500">
     <Grid>
         <WrapPanel x:Name="wp" HorizontalAlignment="Left" Height="300" Margin="182,160,0,0" VerticalAlignment="Top" Width="300"/>
+        <Button Content="New Game" HorizontalAlignment="Left" Margin="45,56,0,0" VerticalAlignment="Top" Width="148" Height="48" FontSize="20" FontWeight="Bold" FontStyle="Italic" Click="Button_Click">
+            <Button.Background>
+                <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                    <GradientStop Color="#FFF3F3F3" Offset="0"/>
+                    <GradientStop Color="#FFEBEBEB" Offset="0.5"/>
+                    <GradientStop Color="#FFDDDDDD" Offset="0.5"/>
+                    <GradientStop Color="#FF8D5757" Offset="1"/>
+                </LinearGradientBrush>
+            </Button.Background>
+        </Button>
     </Grid>
 </Window>
