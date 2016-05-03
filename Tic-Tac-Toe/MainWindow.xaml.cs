@@ -21,35 +21,185 @@ namespace Tic_Tac_Toe
     public partial class MainWindow : Window
     {
         char player = 'X';
-        public void init()
-        {
-            Button[][] t = new Button[3][];
-            for (int i = 0; i < 3; ++i)
-                t[i] = new Button[3];
-            for (int i = 0; i < 3; ++i)
-                for (int j = 0; j < 3; ++j)
-                {
-                    t[i][j] = new Button();
-                    t[i][j].Width = t[i][j].Height = 100;
-                    t[i][j].Name = "_" + i + j;
-                    wp.Children.Add(t[i][j]);
-                    t[i][j].Click += isClicked;
-                }
-        }
+        public const int N = 3;
 
-        void isClicked(Object sender, EventArgs e)
-        {
-            Button b = (Button)sender;
-            int i = int.Parse(b.Name[1] + "");
-            int j = int.Parse(b.Name[2] + "");
-            b.Content = Convert.ToString(player);
-            b.FontSize = 80;
-        }
+        char[][] grid;
 
         public MainWindow()
         {
             InitializeComponent();
-            init();
+            Init();
         }
+
+        Button[][] t;
+
+        public void Init()
+        {
+            t = new Button[N][];
+            grid = new char[N][];
+            for (int i = 0; i < N; ++i)
+            {
+                t[i] = new Button[N];
+                grid[i] = new char[N];
+            }
+            for (int i = 0; i < N; ++i)
+                for (int j = 0; j < N; ++j)
+                {
+                    t[i][j] = new Button();
+                    t[i][j].Width = t[i][j].Height = 100;
+                    t[i][j].Name = "_" + i + j;
+                    t[i][j].FontSize = 80;
+                    grid[i][j] = '-';
+                    wp.Children.Add(t[i][j]);
+                    t[i][j].Click += IsClicked;
+                }
+        }
+
+        public void IsClicked(Object sender, EventArgs e)
+        {
+            Button b = (Button)sender;
+            int i = int.Parse(b.Name[1] + "");
+            int j = int.Parse(b.Name[2] + "");
+            if (grid[i][j] == '-')
+            {
+                grid[i][j] = player;
+                b.Content = Convert.ToString(player);
+                char[][] grid2 = new char[N][];
+                for (int k = 0; k < N; ++k)
+                {
+                    grid2[k] = new char[N];
+                    for (int l = 0; l < N; ++l)
+                        grid2[k][l] = grid[k][l];
+                }
+                MessageBox.Show("After click\n" + PrintGrid());
+                MyPair v = GetNextMove(true);
+                for (int k = 0; k < N; ++k)
+                {
+                    grid[k] = new char[N];
+                    for (int l = 0; l < N; ++l)
+                        grid[k][l] = grid2[k][l];
+                }
+                grid[v.i][v.j] = GetC(true);
+                MessageBox.Show(v + "\n" + PrintGrid());
+                t[v.i][v.j].Content = Convert.ToString(GetC(true));
+            }
+
+        }
+
+        private struct MyPair
+        {
+            public int val;
+            public int i;
+            public int j;
+
+            public MyPair(int val, int i, int j) 
+            {
+                this.val = val;
+                this.i = i;
+                this.j = j;
+            }
+
+            public MyPair(int val)
+            {
+                this.val = val;
+                i = j = -1;
+            }
+
+            public override string ToString() 
+            {
+                return val + " " + i + " " + j;
+            }
+         }
+
+        private string PrintGrid()
+        {
+            string ret = "";
+            for (int i = 0; i < N; ++i)
+            {
+                for (int j = 0; j < N; ++j)
+                    ret += grid[i][j] + " ";
+                ret += "\n";
+            }
+            return ret;
+        }
+
+        private int GetReturnValue(char c)
+        {
+            return c == player ? -1 : 1;
+        }
+
+        private int Check()
+         /*
+          *  player win return -1;
+          *  draw return 0;
+          *  ai win return 1;
+          *  neither all return -2;
+          */
+        {
+            bool row, col, diag1 = true, diag2 = true;
+            bool hasDash = false;
+            for (int i = 0; i < N; ++i)
+            {
+                row = true;
+                col = true;
+                diag1 &= (grid[0][0] == grid[i][i]);
+                diag2 &= (grid[0][N - 1] == grid[i][N - 1 - i]);
+                for (int j = 0; j < N; ++j)
+                {
+                    if (grid[i][j] == '-') hasDash = true;
+                    row &= (grid[i][0] == grid[i][j]);
+                    col &= (grid[0][i] == grid[j][i]);
+                }
+                if (row && grid[i][0] != '-') return GetReturnValue(grid[i][0]);
+                if (col && grid[0][i] != '-') return GetReturnValue(grid[0][i]);
+            }
+            if (diag1 && grid[0][0] != '-') return GetReturnValue(grid[0][0]);
+            if (diag2 && grid[0][N - 1] != '-') return GetReturnValue(grid[0][N - 1]);
+            return hasDash ? -2 : 0;
+        }
+
+        //val, i, j
+        private MyPair GetNextMove(bool maximizer) 
+        {
+            int v = Check();
+            //MessageBox.Show("v = " + v + "\n\n" + PrintGrid());
+            if (v != -2)
+            {
+                //MessageBox.Show("\n\n" + (maximizer ? "maximizer" : "minimizer") + "\n\n"+ PrintGrid());
+                return new MyPair(v);
+            }
+            MyPair ret = new MyPair(maximizer ? -50 : 50);
+            for (int i = 0; i < N; ++i) 
+                for (int j = 0; j < N; ++j)
+                    if (grid[i][j] == '-')
+                    {
+                        grid[i][j] = GetC(maximizer);
+                        MyPair r = GetNextMove(!maximizer);
+                        if ((maximizer && r.val > ret.val) || (!maximizer && r.val < ret.val))
+                        {
+                            ret.val = r.val;
+                            ret.i = i;
+                            ret.j = j;
+                        }
+                        grid[i][j] = '-';
+                    }
+            return ret;
+        }
+
+        private char GetC(bool maximizer)
+        {
+            if(maximizer) return player == 'X' ? '0' : 'X';
+            return player;
+        } 
+
+        private string GridToString()
+        {
+            string ret = "";
+            for (int i = 0; i < N; ++i)
+                for (int j = 0; j < N; ++j)
+                    ret += grid[i][j];
+            return ret;
+        }
+
     }
 }
