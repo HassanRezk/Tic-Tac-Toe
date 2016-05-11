@@ -24,6 +24,7 @@ namespace Tic_Tac_Toe
         public const int N = 3;
 
         char[][] grid;
+        List<string> src;
 
         public MainWindow()
         {
@@ -53,6 +54,11 @@ namespace Tic_Tac_Toe
                     wp.Children.Add(t[i][j]);
                     t[i][j].Click += IsClicked;
                 }
+            src = new List<string>();
+            src.Add("Easy");
+            src.Add("Medium");
+            src.Add("Hard");
+            cmbx.ItemsSource = src;
         }
 
         bool play = true;
@@ -81,7 +87,18 @@ namespace Tic_Tac_Toe
                 int w = Check();
                 if (w == -2)
                 {
-                    MyPair v = GetNextMove(true);
+                    MyPair v;
+                    if (cmbx.SelectedIndex == 0)
+                        v = GetNextMove(false);
+                    else if (cmbx.SelectedIndex == 2)
+                        v = GetNextMove(true);
+                    else
+                    {
+                        Random rnd = new Random();
+                        int p = rnd.Next(1, 10);
+                        if (p >= 5) v = GetNextMove(true);
+                        else v = GetNextMove(false);
+                    }
                     for (int k = 0; k < N; ++k)
                     {
                         grid[k] = new char[N];

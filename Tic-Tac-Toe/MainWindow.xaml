@@ -14,5 +14,7 @@
                 </LinearGradientBrush>
             </Button.Background>
         </Button>
+        <Label Content="Level" HorizontalAlignment="Left" FontSize="20" FontWeight="Bold" FontStyle="Italic" Margin="45,133,0,0" VerticalAlignment="Top" Height="37" Width="148"/>
+        <ComboBox x:Name="cmbx" HorizontalAlignment="Left" Margin="45,192,0,0" VerticalAlignment="Top" Width="120" FontSize="20" FontWeight="Bold" FontStyle="Italic" SelectedIndex="0"/>
     </Grid>
 </Window>
