@@ -57,8 +57,11 @@ namespace Tic_Tac_Toe
 
         bool play = true;
 
+        int counter;
+
         public void IsClicked(Object sender, EventArgs e)
         {
+            counter = 0;
             if (!play) return;
             Button b = (Button)sender;
             int i = int.Parse(b.Name[1] + "");
@@ -94,19 +97,19 @@ namespace Tic_Tac_Toe
                         MessageBox.Show("You Lose");
                         play = false;
                     }
-                    else if (w == -1)
-                    {
-                        MessageBox.Show("You Win");
-                        play = false;
-                    }
                 }
                 else if (Check() == 0)
                 {
                     MessageBox.Show("Draw");
                     play = false;
                 }
+                else if (w == -1)
+                {
+                    MessageBox.Show("You Win");
+                    play = false;
+                }
             }
-
+           // MessageBox.Show(""+counter);
         }
 
         private struct MyPair
@@ -184,6 +187,7 @@ namespace Tic_Tac_Toe
         //val, i, j
         private MyPair GetNextMove(bool maximizer) 
         {
+            ++counter;
             int v = Check();
             //MessageBox.Show("v = " + v + "\n\n" + PrintGrid());
             if (v != -2)
@@ -198,13 +202,16 @@ namespace Tic_Tac_Toe
                     {
                         grid[i][j] = GetC(maximizer);
                         MyPair r = GetNextMove(!maximizer);
+                        grid[i][j] = '-';
                         if ((maximizer && r.val > ret.val) || (!maximizer && r.val < ret.val))
                         {
                             ret.val = r.val;
                             ret.i = i;
                             ret.j = j;
                         }
-                        grid[i][j] = '-';
+                        if ((maximizer && ret.val == 1) || (!maximizer && ret.val == -1)) 
+                            // alpha beta pruning
+                            return ret;
                     }
             return ret;
         }
