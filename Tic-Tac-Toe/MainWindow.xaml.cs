@@ -89,14 +89,21 @@ namespace Tic_Tac_Toe
                 {
                     MyPair v;
                     if (cmbx.SelectedIndex == 0)
-                        v = GetNextMove(false);
+                    {
+                        Random rand = new Random();
+                        int p = rand.Next(1, 10);
+                        if (p < 7)
+                            v = GetNextMove(false);
+                        else
+                            v = GetNextMove(true);
+                    }
                     else if (cmbx.SelectedIndex == 2)
                         v = GetNextMove(true);
                     else
                     {
                         Random rnd = new Random();
-                        int p = rnd.Next(1, 10);
-                        if (p >= 5) v = GetNextMove(true);
+                        int p = rnd.Next(0, 10);
+                        if (p >= 6) v = GetNextMove(true);
                         else v = GetNextMove(false);
                     }
                     for (int k = 0; k < N; ++k)
